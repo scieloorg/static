@@ -78,6 +78,15 @@ var cookiePolicy = {
 			}else if(urlPart[3] == "es" || urlPart[3] == "ES" || urlPart[3] == "Es"){
 				langParam = urlPart[3];  
 			}
+
+			// Check language in the case of http://eventos.scielo.org/brazil-chinameeting, where the language comes right after the second slash
+			else if(urlPart[4] == "pt" || urlPart[4] == "pt_BR" || urlPart[4] == "pt-BR" || urlPart[4] == "pt_Br" || urlPart[4] == "pt-Br"){
+				langParam = urlPart[4]; 
+			}else if(urlPart[4] == "en" || urlPart[4] == "EN" || urlPart[4] == "En"){
+				langParam = urlPart[4];  
+			}else if(urlPart[4] == "es" || urlPart[4] == "ES" || urlPart[4] == "Es"){
+				langParam = urlPart[4];  
+			}
 		}
 
 		if (langParam != ""){
@@ -255,13 +264,19 @@ var cookiePolicy = {
 	    link.style.fontWeight = 400;
 	    link.style.lineHeight = "20px";
 	    link.style.padding = "6px 16px";
+	    link.style.cursor = "pointer";
 
 	    link.addEventListener("click", function() {
 	  		cookiePolicy.setCookie("cookie-policy-accepted", "yes", 365);
 	  		this.parentNode.style.display = "none";
 		});
 
+	    // Append link to div
 	    div.appendChild(link);
+
+	    // Remove padding left and padding right from body
+	    document.body.style.paddingLeft = 0;
+	    document.body.style.paddingRight = 0;
 
 	    // Append element to body
 	    document.body.appendChild(div);
