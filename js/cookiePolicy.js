@@ -53,7 +53,8 @@ var cookiePolicy = {
 			splitParam	= url.split("?"),
 			justParams	= "",
 			theParam	= "",
-			langParam 	= "";
+			langParam 	= "",
+			validParam	= [];
 
 		if (splitParam.length > 1){
 			justParams = splitParam[1].split("&");
@@ -70,22 +71,15 @@ var cookiePolicy = {
 
 		if (langParam == ""){
 
-			// Check language in the case of scielo.org, where the language comes right after the first slash
-			if(urlPart[3] == "pt" || urlPart[3] == "pt_BR" || urlPart[3] == "pt-BR" || urlPart[3] == "pt_Br" || urlPart[3] == "pt-Br"){
-				langParam = urlPart[3]; 
-			}else if(urlPart[3] == "en" || urlPart[3] == "EN" || urlPart[3] == "En"){
-				langParam = urlPart[3];  
-			}else if(urlPart[3] == "es" || urlPart[3] == "ES" || urlPart[3] == "Es"){
-				langParam = urlPart[3];  
-			}
+			validParam =  ["pt", "pt_BR", "pt-BR", "pt_Br", "pt-Br", "en", "EN", "En", "es", "ES", "Es"];
 
-			// Check language in the case of http://eventos.scielo.org/brazil-chinameeting, where the language comes right after the second slash
-			else if(urlPart[4] == "pt" || urlPart[4] == "pt_BR" || urlPart[4] == "pt-BR" || urlPart[4] == "pt_Br" || urlPart[4] == "pt-Br"){
+			// Check language in the case of scielo.org, where the language comes right after the first slash
+			if(validParam.includes(urlPart[3])){
+				langParam = urlPart[3];
+
+			// Check language in the case of http://eventos.scielo.org/brazil-chinameeting, where the language comes right after the second slash	
+			}else if(validParam.includes(urlPart[4])){
 				langParam = urlPart[4]; 
-			}else if(urlPart[4] == "en" || urlPart[4] == "EN" || urlPart[4] == "En"){
-				langParam = urlPart[4];  
-			}else if(urlPart[4] == "es" || urlPart[4] == "ES" || urlPart[4] == "Es"){
-				langParam = urlPart[4];  
 			}
 		}
 
