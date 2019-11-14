@@ -54,7 +54,7 @@ var cookiePolicy = {
 			justParams	= "",
 			theParam	= "",
 			langParam 	= "",
-			validParam	= [];
+			validParam =  ["pt", "pt-br", "en", "es"];
 
 		if (splitParam.length > 1){
 			justParams = splitParam[1].split("&");
@@ -71,7 +71,8 @@ var cookiePolicy = {
 
 		if (langParam == ""){
 
-			validParam =  ["pt", "pt_BR", "pt-BR", "pt_Br", "pt-Br", "en", "EN", "En", "es", "ES", "Es"];
+			urlPart[3] = urlPart[3].replace("_","-").toLowerCase();
+			urlPart[4] = urlPart[4].replace("_","-").toLowerCase();
 
 			// Check language in the case of scielo.org, where the language comes right after the first slash
 			if(validParam.includes(urlPart[3])){
@@ -243,6 +244,7 @@ var cookiePolicy = {
 	    div.style.width = "100%";
 	    div.style.textAlign = "center";
 	    div.style.padding = "13px 10px";
+	    div.style.zIndex = "1";
 
 	    // Create button
 	    var link = document.createElement('a');
