@@ -207,6 +207,45 @@ var cookiePolicy = {
 	clearCookie: function (cname){
 		cookiePolicy.setCookie(cname, "no", -365);
 	},
+	checkIfIsArticle: function (){
+
+		var cookieBar = document.querySelector(".alert-cookie-notification"),
+			floatingMenu = document.querySelector(".floatingMenu"),
+			floatingMenuItem = document.querySelectorAll(".floatingMenuItem"),
+			floatingMenuMobile = document.querySelector(".floatingMenuMobile");
+
+		if(floatingMenu){
+
+			if(cookieBar.style.display != "none"){
+			    
+		    	// Add class to move up floating buttons
+		    	floatingMenu.classList.add("isCookiebarActive");
+
+		    	if(floatingMenuMobile){
+		    		floatingMenuMobile.classList.add("isCookiebarActive");
+		    	}
+		    	if(floatingMenuItem){
+		    		for (var i = 0; i < floatingMenuItem.length; ++i) {
+					  floatingMenuItem[i].classList.add("isCookiebarActive");
+					}
+		    	}
+			    
+			}else{
+
+				//Remove class to move up floating buttons
+		    	floatingMenu.classList.remove("isCookiebarActive");
+		    	
+		    	if(floatingMenuMobile){
+		    		floatingMenuMobile.classList.remove("isCookiebarActive");
+		    	}
+		    	if(floatingMenuItem){
+		    		for (var i = 0; i < floatingMenuItem.length; ++i) {
+					  floatingMenuItem[i].classList.remove("isCookiebarActive");
+					}
+		    	}
+			}
+		}
+	},
 	createElementCookieBar: function (lang){
 
 		var lang = (/^[\w_-]{2,5}$/.exec(lang) ? /[\w_-]{2,5}/.exec(lang)[0].toLowerCase().replace("_", "-") : undefined);
@@ -265,6 +304,9 @@ var cookiePolicy = {
 	    link.addEventListener("click", function() {
 	  		cookiePolicy.setCookie("cookie-policy-accepted", "yes", 365);
 	  		this.parentNode.style.display = "none";
+
+	  		// Check if is Article to move floating buttons
+	    	cookiePolicy.checkIfIsArticle();
 		});
 
 	    // Append link to div
@@ -276,6 +318,9 @@ var cookiePolicy = {
 
 	    // Append element to body
 	    document.body.appendChild(div);
+
+	    // Check if is Article to move floating buttons
+	    cookiePolicy.checkIfIsArticle();
 	 
 	},
 	Init: function (){
@@ -283,7 +328,7 @@ var cookiePolicy = {
 		if(cookiePolicy.isActive){
 			cookiePolicy.checkCookie("cookie-policy-accepted");	
 		}else{
-			cookiePolicy.clearCookie();
+			cookiePolicy.clearCookie("cookie-policy-accepted");
 		}
 		
 	}		
