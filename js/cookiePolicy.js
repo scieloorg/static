@@ -53,7 +53,8 @@ var cookiePolicy = {
 			splitParam	= url.split("?"),
 			justParams	= "",
 			theParam	= "",
-			langParam 	= "";
+			langParam 	= "",
+			validParam =  ["pt", "pt-br", "en", "es"];
 
 		if (splitParam.length > 1){
 			justParams = splitParam[1].split("&");
@@ -70,13 +71,16 @@ var cookiePolicy = {
 
 		if (langParam == ""){
 
+			urlPart[3] = urlPart[3].replace("_","-").toLowerCase();
+			urlPart[4] = urlPart[4].replace("_","-").toLowerCase();
+
 			// Check language in the case of scielo.org, where the language comes right after the first slash
-			if(urlPart[3] == "pt" || urlPart[3] == "pt_BR" || urlPart[3] == "pt-BR" || urlPart[3] == "pt_Br" || urlPart[3] == "pt-Br"){
-				langParam = urlPart[3]; 
-			}else if(urlPart[3] == "en" || urlPart[3] == "EN" || urlPart[3] == "En"){
-				langParam = urlPart[3];  
-			}else if(urlPart[3] == "es" || urlPart[3] == "ES" || urlPart[3] == "Es"){
-				langParam = urlPart[3];  
+			if(validParam.includes(urlPart[3])){
+				langParam = urlPart[3];
+
+			// Check language in the case of http://eventos.scielo.org/brazil-chinameeting, where the language comes right after the second slash	
+			}else if(validParam.includes(urlPart[4])){
+				langParam = urlPart[4]; 
 			}
 		}
 
@@ -203,6 +207,45 @@ var cookiePolicy = {
 	clearCookie: function (cname){
 		cookiePolicy.setCookie(cname, "no", -365);
 	},
+	checkIfIsArticle: function (){
+
+		var cookieBar = document.querySelector(".alert-cookie-notification"),
+			floatingMenu = document.querySelector(".floatingMenu"),
+			floatingMenuItem = document.querySelectorAll(".floatingMenuItem"),
+			floatingMenuMobile = document.querySelector(".floatingMenuMobile");
+
+		if(floatingMenu){
+
+			if(cookieBar.style.display != "none"){
+			    
+		    	// Add class to move up floating buttons
+		    	floatingMenu.classList.add("isCookiebarActive");
+
+		    	if(floatingMenuMobile){
+		    		floatingMenuMobile.classList.add("isCookiebarActive");
+		    	}
+		    	if(floatingMenuItem){
+		    		for (var i = 0; i < floatingMenuItem.length; ++i) {
+					  floatingMenuItem[i].classList.add("isCookiebarActive");
+					}
+		    	}
+			    
+			}else{
+
+				//Remove class to move up floating buttons
+		    	floatingMenu.classList.remove("isCookiebarActive");
+		    	
+		    	if(floatingMenuMobile){
+		    		floatingMenuMobile.classList.remove("isCookiebarActive");
+		    	}
+		    	if(floatingMenuItem){
+		    		for (var i = 0; i < floatingMenuItem.length; ++i) {
+					  floatingMenuItem[i].classList.remove("isCookiebarActive");
+					}
+		    	}
+			}
+		}
+	},
 	createElementCookieBar: function (lang){
 
 		var lang = (/^[\w_-]{2,5}$/.exec(lang) ? /[\w_-]{2,5}/.exec(lang)[0].toLowerCase().replace("_", "-") : undefined);
@@ -240,6 +283,7 @@ var cookiePolicy = {
 	    div.style.width = "100%";
 	    div.style.textAlign = "center";
 	    div.style.padding = "13px 10px";
+	    div.style.zIndex = "1";
 
 	    // Create button
 	    var link = document.createElement('a');
@@ -255,16 +299,28 @@ var cookiePolicy = {
 	    link.style.fontWeight = 400;
 	    link.style.lineHeight = "20px";
 	    link.style.padding = "6px 16px";
+	    link.style.cursor = "pointer";
 
 	    link.addEventListener("click", function() {
 	  		cookiePolicy.setCookie("cookie-policy-accepted", "yes", 365);
 	  		this.parentNode.style.display = "none";
+
+	  		// Check if is Article to move floating buttons
+	    	cookiePolicy.checkIfIsArticle();
 		});
 
+	    // Append link to div
 	    div.appendChild(link);
+
+	    // Remove padding left and padding right from body
+	    document.body.style.paddingLeft = 0;
+	    document.body.style.paddingRight = 0;
 
 	    // Append element to body
 	    document.body.appendChild(div);
+
+	    // Check if is Article to move floating buttons
+	    cookiePolicy.checkIfIsArticle();
 	 
 	},
 	Init: function (){
@@ -272,7 +328,7 @@ var cookiePolicy = {
 		if(cookiePolicy.isActive){
 			cookiePolicy.checkCookie("cookie-policy-accepted");	
 		}else{
-			cookiePolicy.clearCookie();
+			cookiePolicy.clearCookie("cookie-policy-accepted");
 		}
 		
 	}		
