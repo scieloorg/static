@@ -283,7 +283,7 @@ var cookiePolicy = {
 	    div.style.width = "100%";
 	    div.style.textAlign = "center";
 	    div.style.padding = "13px 10px";
-	    div.style.zIndex = "1";
+	    div.style.zIndex = "99999";
 
 	    // Create button
 	    var link = document.createElement('a');
