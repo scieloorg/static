@@ -70,18 +70,24 @@ var cookiePolicy = {
 		}
 
 		if (langParam == ""){
+			
+			if(urlPart[3]){
+				urlPart[3] = urlPart[3].replace("_","-").toLowerCase();
 
-			urlPart[3] = urlPart[3].replace("_","-").toLowerCase();
-			urlPart[4] = urlPart[4].replace("_","-").toLowerCase();
-
-			// Check language in the case of scielo.org, where the language comes right after the first slash
-			if(validParam.includes(urlPart[3])){
-				langParam = urlPart[3];
-
-			// Check language in the case of http://eventos.scielo.org/brazil-chinameeting, where the language comes right after the second slash	
-			}else if(validParam.includes(urlPart[4])){
-				langParam = urlPart[4]; 
+				// Check language in the case of scielo.org/pt, where the language comes right after the first slash
+				if(validParam.includes(urlPart[3])){
+					langParam = urlPart[3];
+				}
 			}
+			if (urlPart[4]){
+				urlPart[4] = urlPart[4].replace("_","-").toLowerCase();	
+
+				// Check language in the case of http://eventos.scielo.org/brazil-chinameeting/pt, where the language comes right after the second slash
+				if(validParam.includes(urlPart[4])){
+					langParam = urlPart[4]; 
+				}
+			}
+			
 		}
 
 		if (langParam != ""){
@@ -283,7 +289,7 @@ var cookiePolicy = {
 	    div.style.width = "100%";
 	    div.style.textAlign = "center";
 	    div.style.padding = "13px 10px";
-	    div.style.zIndex = "1";
+	    div.style.zIndex = "99999";
 
 	    // Create button
 	    var link = document.createElement('a');
