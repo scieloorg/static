@@ -12,11 +12,18 @@ var cookiePolicy = {
 	// Text Appearance
 	bgColor: "#1f1f1f",
 	textColor: "#ffffff",
+
+	// Links in languages
+	lnkPt: "https://www.scielo.org/pt/sobre-o-scielo/politica-de-privacidade/",
+	lnkEn: "https://www.scielo.org/en/about-scielo/privacy-policy/",
+	lnkEs: "https://www.scielo.org/es/sobre-el-scielo/politica-de-privacidad/",
 	
 	// Message in languages
-	msgPt: "Este site usa cookies para garantir que você obtenha uma melhor experiência de navegação.",
-	msgEn: "This site uses cookies to ensure you get a better browsing experience.",
-	msgEs: "Este sitio utiliza cookies para garantizar una mejor experiencia de navegación.",
+	msgPt: "Este site usa cookies para garantir que você obtenha uma melhor experiência de navegação. Leia nossa ",
+	msgEn: "This site uses cookies to ensure you get a better browsing experience. Read our ",
+	msgEs: "Este sitio utiliza cookies para garantizar una mejor experiencia de navegación. Lea nuestra ",
+
+	
 
 	setCookie: function (cname, cvalue, exdays){
 		var d = new Date();
@@ -54,7 +61,11 @@ var cookiePolicy = {
 			justParams	= "",
 			theParam	= "",
 			langParam 	= "";
-
+			
+		if (urlPart[2] == "preprints.scielo.org"){
+			return false;
+		}
+		
 		if (splitParam.length > 1){
 			justParams = splitParam[1].split("&");
 
@@ -85,6 +96,18 @@ var cookiePolicy = {
 		}else{
 			return false;
 		}
+	},
+
+	// check if is in preprint.scielo.org
+	checkLanguageAtHtmlLang: function (){
+
+		var element = document.documentElement;
+
+		if (element.hasAttribute("lang")) {
+			return element.getAttribute('lang');
+		}else{
+			return false;
+		}		
 	},
 
 	// hasScriptParam
@@ -178,13 +201,18 @@ var cookiePolicy = {
 			
 				cookiePolicy.createElementCookieBar(cookiePolicy.getCookie("lang"));
 			
+			// Else, verify if is lang attribute on html tag. Only in preprints
+			}else if(cookiePolicy.checkLanguageAtHtmlLang()){
+
+				cookiePolicy.createElementCookieBar(cookiePolicy.checkLanguageAtHtmlLang());
+
 			// Else, look for browser language
 			}else{
 				var userLang = navigator.language || navigator.userLanguage; 
 
 				if (userLang != "" && userLang != null) {
 					cookiePolicy.createElementCookieBar(userLang);
-				
+					
 				/*
 				 If there is no: 
 					
@@ -193,6 +221,7 @@ var cookiePolicy = {
 					- cookie language
 					- cookie lang
 					- browser language
+					- lang attribute on html tag
 				*/
 				}else{
 					cookiePolicy.createElementCookieBar("en");
@@ -255,12 +284,56 @@ var cookiePolicy = {
 	    link.style.fontWeight = 400;
 	    link.style.lineHeight = "20px";
 	    link.style.padding = "6px 16px";
+		link.style.marginLeft = "15px";
+		link.style.borderRadius = "4px";
 
 	    link.addEventListener("click", function() {
 	  		cookiePolicy.setCookie("cookie-policy-accepted", "yes", 365);
 	  		this.parentNode.style.display = "none";
 		});
 
+
+	    // Create link Privacy Policy
+	    var linkPp = document.createElement('a');
+	    linkPp.style.cursor = "pointer";
+	    linkPp.style.color = "#fff";
+	    linkPp.style.textDecoration = "underline";
+	    //link.setAttribute('class', 'btn');
+	    
+
+		// Choose content by language
+        if (lang.indexOf("pt") == 0) {
+            
+            linkPp.innerHTML = "Política de Privacidade";
+
+            linkPp.addEventListener("click", function() {
+		  		window.open(cookiePolicy.lnkPt, '_blank');
+			});
+
+        } else if (lang.indexOf("es") == 0) {
+
+            linkPp.innerHTML = "Política de Privacidad";
+
+            linkPp.addEventListener("click", function() {
+		  		window.open(cookiePolicy.lnkEs, '_blank');
+			});
+        
+        } else {
+            linkPp.innerHTML = "Privacy Policy";
+
+            linkPp.addEventListener("click", function() {
+		  		window.open(cookiePolicy.lnkEn, '_blank');
+			});
+
+        }
+
+        // append Privacy Policy link
+	    div.appendChild(linkPp);
+
+		// append Text "." outside the link
+	    div.innerHTML += ".";
+
+	    // append Ok Button
 	    div.appendChild(link);
 
 	    // Append element to body
@@ -274,6 +347,7 @@ var cookiePolicy = {
 		}else{
 			cookiePolicy.clearCookie();
 		}
+
 		
 	}		
 }
